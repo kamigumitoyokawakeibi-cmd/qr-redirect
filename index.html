@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>読み込み中...</title>
+</head>
+<body style="background-color: #f8f9fa; text-align: center; padding-top: 50px; font-family: sans-serif;">
+    <p>安全なページへ移動しています...</p>
+    <p style="font-size: 14px; color: #666;">
+        画面が切り替わらない場合は<a id="gasLink" href="#">こちら</a>をタップしてください。
+    </p>
+
+    <script>
+        // 1. あなたのGASの基本URL（固定部分）
+        const gasBaseUrl = "https://script.google.com/macros/s/AKfycbwmjoby4MZa0PcyoIF96pU3HDMOHo41RfkESKUtxkXRvKGtAxO8PDTG17BX9O4FYx__/exec";
+
+        // 2. QRコードから読み取ったパラメータ（?no=〇〇）を取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const noParam = urlParams.get('no');
+
+        // 3. 転送先の最終URLを合体させる
+        let finalUrl = gasBaseUrl + "?mode=exit";
+        if (noParam) {
+            finalUrl += "&no=" + noParam;
+        }
+
+        // 4. 万が一のための手動リンクにURLをセット
+        document.getElementById("gasLink").href = finalUrl;
+
+        // 5. プログラムによる自動転送（ここでアプリ強制起動を回避！）
+        window.location.replace(finalUrl);
+    </script>
+</body>
+</html>

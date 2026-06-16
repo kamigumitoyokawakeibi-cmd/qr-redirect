@@ -12,23 +12,41 @@
     </p>
 
     <script>
-        // 1. あなたのGASの基本URL（固定部分）
-        const gasBaseUrl = "https://script.google.com/macros/s/AKfycbx3s-7_VpCEjy4jhLeKEKGIYccbSaLI_A4HSIgc254B6fsfjfG3hSfPbrglPLpg6NWw6g/exec";
+        // 1. ★来訪者用★ GASの基本URL（?mode=exit 等より前の部分）を貼り付けてください
+        const gasBaseUrl = "https://script.google.com/macros/s/AKfycbzaKnAvvjzEQwMVl9wKBwSw0lcQA4BDEt9UT2s0Oq5AfMWbsndvwC1E92DgnNJh2L_BNw/exec";
 
         // 2. QRコードから読み取ったパラメータ（?no=〇〇）を取得
         const urlParams = new URLSearchParams(window.location.search);
-        const noParam = urlParams.get('no');
+        let noParam = urlParams.get('no');
 
-        // 3. 転送先の最終URLを合体させる
+        // 3. 【自動変換システム】古い番号(1-900等)が来たら、新しい番号(800等)に変換する
+        if (noParam) {
+            let parts = noParam.split("-");
+            // もし「1-900」のようなハイフン付きの古い形式だった場合のみ変換を実行
+            if (parts.length === 2) {
+                let prefix = parts[0];
+                let num = parseInt(parts[1], 10);
+                
+                if (prefix === "1" && num >= 900 && num <= 930) {
+                    noParam = String(num - 100); // 例: 1-900 → 800
+                } else if (prefix === "2" && num >= 900 && num <= 930) {
+                    noParam = String(num);       // 例: 2-900 → 900
+                } else if (prefix === "3" && num >= 900 && num <= 930) {
+                    noParam = String(num + 100); // 例: 3-900 → 1000
+                }
+            }
+        }
+
+        // 4. 転送先の最終URLを合体させる
         let finalUrl = gasBaseUrl + "?mode=exit";
         if (noParam) {
             finalUrl += "&no=" + noParam;
         }
 
-        // 4. 万が一のための手動リンクにURLをセット
+        // 5. 万が一のための手動リンクにURLをセット
         document.getElementById("gasLink").href = finalUrl;
 
-        // 5. プログラムによる自動転送（ここでアプリ強制起動を回避！）
+        // 6. プログラムによる自動転送（ここでアプリ強制起動を回避！）
         window.location.replace(finalUrl);
     </script>
 </body>
